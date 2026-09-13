@@ -25,8 +25,17 @@ import os
 GROQ_VISION_MODEL = "qwen/qwen3.6-27b"
 
 EXTRACTION_PROMPT = """You are reading a photo of a Pakistani electricity bill \
-(K-Electric, LESCO, or another DISCO). Extract exactly these fields and return \
-ONLY a JSON object, no other text:
+(K-Electric, LESCO, or another DISCO). Do not show your reasoning or use any \
+<think> tags — respond with nothing but the JSON object below, no other text.
+
+IMPORTANT for units_consumed_kwh: bills often show several different \
+"units" numbers — a breakdown by off-peak/peak energy, MDI, reactive \
+energy, or a 13-month usage chart. Ignore all of those. Use ONLY the total \
+monthly consumption figure, usually shown prominently near the top as \
+"Current Month" or "Units Consumed", often formatted like \
+"39,741 units = Rs. X". That top-line total is the number to extract.
+
+Extract exactly these fields:
 
 {
   "units_consumed_kwh": <number or null>,
@@ -73,11 +82,20 @@ def extract_bill_data(image_bytes: bytes, media_type: str = "image/jpeg") -> dic
                 }
             ],
             temperature=0.0,
-            max_tokens=800,
+            max_tokens=2000,
         )
         text = (response.choices[0].message.content or "").strip()
         if not text:
             return {"error": "model returned an empty response"}
+
+        # This model "thinks out loud" in a <think>...</think> block before
+        # its real answer. Strip that out — if the block never closed
+        # (ran out of tokens mid-thought), there's no usable answer at all.
+        if "<think>" in text:
+            if "</think>" in text:
+                text = text.split("</think>", 1)[1].strip()
+            else:
+                return {"error": "model ran out of tokens while still reasoning — try again"}
 
         # Model sometimes wraps JSON in code fences, or adds a sentence
         # before/after the object despite instructions — pull out just the
