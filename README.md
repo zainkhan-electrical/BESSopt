@@ -88,7 +88,7 @@ git remote add origin https://github.com/<your-username>/bessopt.git
 git push -u origin main
 ```
 
-Make sure the repo is **public** (or at least "anyone with the link can view") — the hackathon
+Make the repo is **public** (or at least "anyone with the link can view") — the hackathon
 submission form requires a viewable link.
 
 ## Tuning local assumptions
@@ -101,9 +101,9 @@ else in the app hardcodes a number.
 
 | Member | Role |
 |---|---|
-| M. Zain Khan | Calculation Engine + Team Lead |
+| Muhammad Zain Khan | Calculation Engine + Deployment + Presentation + Team Lead |
 | Adnan Yousaf | Frontend |
 | Saqib Mehmood | Backend |
-| Ahmad Nazir | Frontend Support + Deployment |
+| Ahmad Nazir | Frontend Support |
 | Atta Muhammad Mazhar | Vision Extraction |
-| Dr. Ayesha Sultan | Documentation & Presentation |
+| Fahad Shahid | Documentation |
