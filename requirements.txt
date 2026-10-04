@@ -1,0 +1,3 @@
+streamlit>=1.45
+groq>=0.11
+reportlab>=4.0
